@@ -4,10 +4,21 @@ import router from './router';
 import './assets/css/app.css';
 import BackToTop from 'vue-backtotop';
 
+import { GraphQLClient } from 'graphql-request';
+
+const graphcmsClient = new GraphQLClient(
+	'https://api-eu-central-1.graphcms.com/v2/cl01cblcoa0yu01zagtac9lpt/master'
+);
+
 const feather = require('feather-icons');
 feather.replace();
 
 createApp(App)
+	.mixin({
+		beforeCreate() {
+			this.$graphcms = graphcmsClient;
+		}
+	})
 	.use(router)
 	.use(BackToTop)
 	.mount('#app');

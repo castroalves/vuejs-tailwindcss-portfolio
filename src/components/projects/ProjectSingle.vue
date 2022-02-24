@@ -6,13 +6,13 @@ export default {
 
 <template>
 	<router-link
-		to="/projects/single-project"
+		:to="{ name: 'Single Project', params: { slug: project.slug } }"
 		class="rounded-xl shadow-lg hover:shadow-xl cursor-pointer mb-10 sm:mb-0 bg-secondary-light dark:bg-ternary-dark"
-		aria-label="Single Project"
+		:aria-label="project.title"
 	>
 		<div>
 			<img
-				:src="project.img"
+				:src="project.images[0].url"
 				:alt="project.title"
 				class="rounded-t-xl border-none"
 			/>
@@ -25,7 +25,7 @@ export default {
 			</p>
 			<span
 				class="font-general-medium text-lg text-ternary-dark dark:text-ternary-light"
-				>{{ project.category }}</span
+				>{{ project.categories[0].name }}</span
 			>
 		</div>
 	</router-link>

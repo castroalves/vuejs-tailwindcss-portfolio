@@ -9,7 +9,7 @@ export default {
 		AppBanner,
 		ProjectsGrid,
 		Button,
-	},
+	}
 };
 </script>
 

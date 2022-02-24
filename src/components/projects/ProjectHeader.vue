@@ -1,6 +1,6 @@
 <script>
 export default {
-	props: ['singleProjectHeader'],
+	props: ['singleProjectHeader']
 };
 </script>
 
@@ -10,7 +10,7 @@ export default {
 		<p
 			class="font-general-medium text-left text-3xl sm:text-4xl font-bold text-primary-dark dark:text-primary-light mt-14 sm:mt-20 mb-7"
 		>
-			{{ singleProjectHeader.singleProjectTitle }}
+			{{ singleProjectHeader.title }}
 		</p>
 		<div class="flex">
 			<div class="flex items-center mr-10">
@@ -20,8 +20,7 @@ export default {
 				></i>
 				<span
 					class="font-general-medium ml-2 leading-none text-primary-dark dark:text-primary-light"
-					>{{ singleProjectHeader.singleProjectDate }}</span
-				>
+					>{{ singleProjectHeader.publishedAt.substr(0, 10) }}</span>
 			</div>
 			<div class="flex items-center">
 				<i
@@ -30,7 +29,7 @@ export default {
 				></i>
 				<span
 					class="font-general-medium ml-2 leading-none text-primary-dark dark:text-primary-light"
-					>{{ singleProjectHeader.singleProjectTag }}</span
+					>{{ singleProjectHeader.categories[0].name }}</span
 				>
 			</div>
 		</div>

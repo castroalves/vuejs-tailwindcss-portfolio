@@ -3,7 +3,6 @@ import feather from 'feather-icons';
 
 export default {
 	props: ['projectInfo'],
-
 	mounted() {
 		feather.replace();
 	},
@@ -22,25 +21,20 @@ export default {
 				<p
 					class="font-general-medium text-2xl text-secondary-dark dark:text-secondary-light mb-2"
 				>
-					{{ projectInfo.clientHeading }}
+					About Client
 				</p>
 				<ul class="leading-loose">
-					<li
-						v-for="info in projectInfo.companyInfos"
-						:key="info"
-						class="font-general-regular text-ternary-dark dark:text-ternary-light"
-					>
-						<span>{{ info.title }}: </span>
-						<a
-							href="#"
-							:class="
-								info.title == 'Website' || info.title == 'Phone'
-									? 'hover:underline cursor-pointer'
-									: ''
-							"
-							aria-label="Project Website and Phone"
-							>{{ info.details }}</a
-						>
+					<li class="font-general-regular text-ternary-dark dark:text-ternary-light">
+						<span>Name: {{ projectInfo.client.name }}</span>
+					</li>
+					<li class="font-general-regular text-ternary-dark dark:text-ternary-light">
+						<span>Services: {{ projectInfo.client.services }}</span>
+					</li>
+					<li class="font-general-regular text-ternary-dark dark:text-ternary-light">
+						<span>Website: {{ projectInfo.client.website }}</span>
+					</li>
+					<li class="font-general-regular text-ternary-dark dark:text-ternary-light">
+						<span>Phone: {{ projectInfo.client.phone }}</span>
 					</li>
 				</ul>
 			</div>
@@ -50,12 +44,12 @@ export default {
 				<p
 					class="font-general-medium text-2xl text-ternary-dark dark:text-ternary-light mb-2"
 				>
-					{{ projectInfo.objectivesHeading }}
+					Objective
 				</p>
 				<p
 					class="font-general-regular text-primary-dark dark:text-ternary-light"
 				>
-					{{ projectInfo.objectivesDetails }}
+					{{ projectInfo.objective }}
 				</p>
 			</div>
 
@@ -64,12 +58,12 @@ export default {
 				<p
 					class="font-general-medium text-2xl text-ternary-dark dark:text-ternary-light mb-2"
 				>
-					{{ projectInfo.technologies[0].title }}
+					Tools &amp; Technologies
 				</p>
 				<p
 					class="font-general-regular text-primary-dark dark:text-ternary-light"
 				>
-					{{ projectInfo.technologies[0].techs.join(', ') }}
+					{{ projectInfo.techStack }}
 				</p>
 			</div>
 
@@ -99,18 +93,12 @@ export default {
 
 		<!-- Single project right section details -->
 		<div class="w-full sm:w-2/3 text-left mt-10 sm:mt-0">
-			<p
-				class="font-general-medium text-primary-dark dark:text-primary-light text-2xl font-bold mb-7"
-			>
-				{{ projectInfo.projectDetailsHeading }}
+			<p class="font-general-medium text-primary-dark dark:text-primary-light text-2xl font-bold mb-7">
+				Challenge
 			</p>
-			<p
-				v-for="projectDetail in projectInfo.projectDetails"
-				:key="projectDetail.id"
-				class="font-general-regular mb-5 text-lg text-ternary-dark dark:text-ternary-light"
-			>
-				{{ projectDetail.details }}
-			</p>
+			<div class="font-general-regular mb-5 text-lg text-ternary-dark dark:text-ternary-light">
+				<div v-html="projectInfo.description.html"></div>
+			</div>
 		</div>
 	</div>
 </template>

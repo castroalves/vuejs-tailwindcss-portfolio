@@ -2,17 +2,44 @@
 import feather from 'feather-icons';
 import ProjectsFilter from './ProjectsFilter.vue';
 import ProjectSingle from './ProjectSingle.vue';
-import projects from '../../data/projects';
+// import projects from '../../data/projects';
+
+import { gql } from 'graphql-request';
 
 export default {
 	components: { ProjectSingle, ProjectsFilter },
 	data: () => {
 		return {
-			projects,
+			projects: [],
 			projectsHeading: 'Projects Portfolio',
 			selectedCategory: '',
 			searchProject: '',
 		};
+	},
+	async created() {
+		const data = await this.$graphcms.request(
+			gql`
+				{
+					projects(where: {featured: true}) {
+						id
+						slug
+						title
+						images(first: 1) {
+							id
+							url(transformation: {image: {resize: {height: 293, width: 336, fit: crop}}})
+						}
+						categories {
+							id
+							name
+						}
+					}
+				}
+			`
+		);
+
+		console.log(data.projects);
+
+		this.projects = data.projects;
 	},
 	computed: {
 		// Get the filtered projects
@@ -30,9 +57,8 @@ export default {
 		filterProjectsByCategory() {
 			return this.projects.filter((item) => {
 				let category =
-					item.category.charAt(0).toUpperCase() +
-					item.category.slice(1);
-				console.log(category);
+					item.categories[0].name.charAt(0).toUpperCase() +
+					item.categories[0].name.slice(1);
 				return category.includes(this.selectedCategory);
 			});
 		},

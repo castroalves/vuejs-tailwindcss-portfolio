@@ -5,6 +5,8 @@ import ProjectGallery from '../components/projects/ProjectGallery.vue';
 import ProjectInfo from '../components/projects/ProjectInfo.vue';
 import ProjectRelatedProjects from '../components/projects/ProjectRelatedProjects.vue';
 
+import { gql } from 'graphql-request';
+
 export default {
 	name: 'Projects',
 	components: {
@@ -15,91 +17,8 @@ export default {
 	},
 	data: () => {
 		return {
-			singleProjectHeader: {
-				singleProjectTitle: 'Project Management UI',
-				singleProjectDate: 'Jul 26, 2021',
-				singleProjectTag: 'UI / Frontend',
-			},
-			projectImages: [
-				{
-					id: 1,
-					title: 'Kabul Project Management UI',
-					img: require('@/assets/images/ui-project-1.jpg'),
-				},
-				{
-					id: 2,
-					title: 'Kabul Project Management UI',
-					img: require('@/assets/images/web-project-2.jpg'),
-				},
-				{
-					id: 3,
-					title: 'Kabul Project Management UI',
-					img: require('@/assets/images/mobile-project-2.jpg'),
-				},
-			],
-			projectInfo: {
-				clientHeading: 'About Client',
-				companyInfos: [
-					{
-						id: 1,
-						title: 'Name',
-						details: 'Company Ltd',
-					},
-					{
-						id: 2,
-						title: 'Services',
-						details: 'UI Design & Frontend Development',
-					},
-					{
-						id: 3,
-						title: 'Website',
-						details: 'https://company.com',
-					},
-					{
-						id: 4,
-						title: 'Phone',
-						details: '555 8888 888',
-					},
-				],
-				objectivesHeading: 'Objective',
-				objectivesDetails:
-					'Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio, natus! Quibusdam enim quod in esse, mollitia molestias incidunt quas ipsa accusamus veniam.',
-				technologies: [
-					{
-						title: 'Tools & Technologies',
-						techs: [
-							'HTML',
-							'CSS',
-							'JavaScript',
-							'Vue.js',
-							'TailwindCSS',
-							'AdobeXD',
-						],
-					},
-				],
-				projectDetailsHeading: 'Challenge',
-				projectDetails: [
-					{
-						id: 1,
-						details:
-							'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nihil vel illum asperiores dignissimos cumque quibusdam et fugiat voluptatem nobis suscipit explicabo, eaque consequatur nesciunt, fugit eligendi corporis laudantium adipisci soluta? Lorem ipsum, dolor sit amet consectetur adipisicing elit. Incidunt totam dolorum, ducimus obcaecati, voluptas facilis molestias nobis ut quam natus similique inventore excepturi optio ipsa deleniti fugit illo. Unde, amet! Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsum illo necessitatibus perspiciatis! Aperiam perferendis labore temporibus, eos culpa corporis recusandae quas, fuga voluptatibus nesciunt odit libero tenetur neque consequatur ea.',
-					},
-					{
-						id: 2,
-						details:
-							'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nihil vel illum asperiores dignissimos cumque quibusdam et fugiat voluptatem nobis suscipit explicabo, eaque consequatur nesciunt, fugit eligendi corporis laudantium adipisci soluta?',
-					},
-					{
-						id: 3,
-						details:
-							'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nihil vel illum asperiores dignissimos cumque quibusdam et fugiat voluptatem nobis suscipit explicabo, eaque consequatur nesciunt, fugit eligendi corporis laudantium adipisci soluta?',
-					},
-					{
-						id: 4,
-						details:
-							'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nihil vel illum asperiores dignissimos cumque quibusdam et fugiat voluptatem nobis suscipit explicabo, eaque consequatur nesciunt, fugit eligendi corporis laudantium adipisci soluta? Lorem ipsum, dolor sit amet consectetur adipisicing elit. Incidunt totam dolorum, ducimus obcaecati, voluptas facilis molestias nobis ut quam natus similique inventore excepturi optio ipsa deleniti fugit illo. Unde, amet! Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsum illo necessitatibus perspiciatis! Aperiam perferendis labore temporibus, eos culpa corporis recusandae quas, fuga voluptatibus nesciunt odit libero tenetur neque consequatur ea.',
-					},
-				],
+			relatedProjects: [],
+			project: {
 				socialSharingsHeading: 'Share This',
 				socialSharings: [
 					{
@@ -134,32 +53,11 @@ export default {
 					},
 				],
 			},
-			relatedProject: {
-				relatedProjectsHeading: 'Related Projects',
-				relatedProjects: [
-					{
-						id: 1,
-						title: 'Mobile UI',
-						img: require('@/assets/images/mobile-project-1.jpg'),
-					},
-					{
-						id: 2,
-						title: 'Web Application',
-						img: require('@/assets/images/web-project-1.jpg'),
-					},
-					{
-						id: 3,
-						title: 'UI Design',
-						img: require('@/assets/images/ui-project-2.jpg'),
-					},
-					{
-						id: 4,
-						title: 'Kabul Mobile App UI',
-						img: require('@/assets/images/mobile-project-2.jpg'),
-					},
-				],
-			},
 		};
+	},
+	async created() {
+		this.getSingleProject();
+		this.getRelatedProjects();
 	},
 	mounted() {
 		feather.replace();
@@ -167,23 +65,101 @@ export default {
 	updated() {
 		feather.replace();
 	},
-	methods: {},
+	methods: {
+		async getSingleProject() {
+			const data = await this.$graphcms.request(
+				gql`
+					query GetSingleProject($slug: String!) {
+						project(where: {slug: $slug}, stage: PUBLISHED) {
+							id
+							title
+							objective
+							description {
+							html
+							}
+							techStack
+							categories {
+							id
+							name
+							}
+							images {
+							id
+							url
+							}
+							publishedAt
+							client {
+							name
+							phone
+							id
+							services
+							website
+							}
+						}
+					}
+				`,
+				{
+					slug: this.$route.params.slug
+				}
+			);
+
+			this.project = Object.assign(this.project, data.project);
+		},
+		async getRelatedProjects() {
+			const data = await this.$graphcms.request(
+				gql`
+					query GetRelatedProjects($slug: String!) {
+						projects(where: {slug_not: $slug}, stage: PUBLISHED) {
+							id
+							title
+							slug
+							objective
+							description {
+								html
+							}
+							techStack
+							categories {
+								id
+								name
+							}
+							images {
+								id
+								url
+							}
+							publishedAt
+							client {
+								name
+								phone
+								id
+								services
+								website
+							}
+						}
+					}
+				`,
+				{
+					slug: this.$route.params.slug
+				}
+			);
+
+			this.relatedProjects = data.projects;
+		},
+	},
 };
 </script>
 
 <template>
 	<div class="container mx-auto mt-10 sm:mt-20">
 		<!-- Project header -->
-		<ProjectHeader :singleProjectHeader="singleProjectHeader" />
+		<ProjectHeader :singleProjectHeader="project" />
 
 		<!-- Project gallery -->
-		<ProjectGallery :projectImages="projectImages" />
+		<ProjectGallery :projectImages="project.images" />
 
 		<!-- Project information -->
-		<ProjectInfo :projectInfo="projectInfo" />
+		<ProjectInfo :projectInfo="project" />
 
 		<!-- Project related projects -->
-		<ProjectRelatedProjects :relatedProject="relatedProject" />
+		<ProjectRelatedProjects :relatedProjects="relatedProjects" />
 	</div>
 </template>
 

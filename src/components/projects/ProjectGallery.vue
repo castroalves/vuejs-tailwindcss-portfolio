@@ -12,9 +12,9 @@ export default {
 			:key="projectImage.id"
 		>
 			<img
-				:src="projectImage.img"
+				:src="projectImage.url"
 				class="rounded-xl cursor-pointer shadow-lg sm:shadow-none"
-				alt="{{ projectImage.title }}"
+				alt="{{ projectImage.id }}"
 			/>
 		</div>
 	</div>
